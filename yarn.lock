@@ -4347,24 +4347,10 @@ valtio@1.11.2:
     proxy-compare "2.5.1"
     use-sync-external-store "1.2.0"
 
-viem@^1.0.0:
+viem@^1.0.0, viem@^1.18.0:
   version "1.18.0"
   resolved "https://registry.yarnpkg.com/viem/-/viem-1.18.0.tgz#26566664d70ab0402f163547c1a27f83daf77d06"
   integrity sha512-NeKi5RFj7fHdsnk5pojivHFLkTyBWyehxeSE/gSPTDJKCWnR9i+Ra0W++VwN5ghciEG55O8b4RdpYhzGmhnr7A==
-  dependencies:
-    "@adraffy/ens-normalize" "1.9.4"
-    "@noble/curves" "1.2.0"
-    "@noble/hashes" "1.3.2"
-    "@scure/bip32" "1.3.2"
-    "@scure/bip39" "1.2.1"
-    abitype "0.9.8"
-    isows "1.0.3"
-    ws "8.13.0"
-
-viem@^1.17.1:
-  version "1.17.1"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-1.17.1.tgz#1d22aad4facd1bf35e4be4f6c3caba72d3963e18"
-  integrity sha512-MSbrfntjgIMKPUPdNJ1pnwT1pDfnOzJnKSLqpafw1q+1k6k6M/jxn09g3WbKefIKIok122DcbmviMow+4FqkAg==
   dependencies:
     "@adraffy/ens-normalize" "1.9.4"
     "@noble/curves" "1.2.0"

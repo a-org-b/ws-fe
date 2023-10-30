@@ -1,5 +1,8 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Smart contract
+0xAbe128438210ea30a9b14635531b3c98a2711c82
+
 ## Getting Started
 
 First, run the development server:

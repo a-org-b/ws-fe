@@ -5,7 +5,6 @@ import {
 import {
     createConfig,
     configureChains,
-    Chain
 } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { polygonMumbai } from "wagmi/chains"
