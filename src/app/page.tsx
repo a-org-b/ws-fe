@@ -1,15 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ConnectButton, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { Chains, wagmiClient } from "@/wallet-config";
 import { WagmiConfig, usePublicClient, useWalletClient } from "wagmi";
@@ -25,14 +16,23 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+import { NewCard } from "../components/NewCard";
+
 interface Transaction {
+  transaction_hash: string;
   blockNumber: number;
   blockTimestamp: string;
   value: string;
   contractAddress: string;
 }
 
-export default function Home(): JSX.Element {
+interface NFT {
+  NFTCount: number;
+  imageURI: string;
+  name: string;
+  value: string;
+}
+export default function Home() {
   const pbClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const [chainIdInput, setChainIdInput] = useState<string>("");
@@ -40,7 +40,11 @@ export default function Home(): JSX.Element {
   const [apiResponseData, setApiResponseData] = useState<Transaction[] | null>(
     null
   );
+  const [apiNFTResponseData, setApiNFTResponseData] = useState<NFT[] | null>(
+    null
+  );
   const [transactionCount, setTransactionCount] = useState<number>(0);
+  const [NFTCountState, setNFTCountState] = useState<number>(0);
   const [totalTransactionValue, setTotalTransactionValue] = useState<number>(0);
   const [mintsLeft, setMintsLeft] = useState("");
 
@@ -56,7 +60,7 @@ export default function Home(): JSX.Element {
       });
   }, [pbClient, walletClient]);
 
-  const makeAPICall = (): void => {
+  const transactionsAPICall = (): void => {
     const options = {
       method: "GET",
       headers: {
@@ -76,19 +80,53 @@ export default function Home(): JSX.Element {
           Array.isArray(response.data.data)
         ) {
           setApiResponseData(response.data.data);
-          console.log(response.data.data[0].transaction_hash);
           let count = response.data.count;
           let valueSum = 0;
           response.data.data.forEach((item: Transaction) => {
             valueSum += parseInt(item.value);
           });
-          setTransactionCount(count);
+          valueSum /= 1000000;
+          valueSum += count;
           setTotalTransactionValue(valueSum);
         } else {
           console.error("Invalid response format.");
         }
       })
       .catch((error: any) => console.error(error));
+  };
+
+  const NFTAPICall = (): void => {
+    const options: AxiosRequestConfig = {
+      headers: {
+        accept: "application/json",
+        "x-api-key": process.env.NEXT_PUBLIC_CHAINBASE_API_KEY,
+      },
+    };
+
+    const url: string = `https://api.chainbase.online/v1/account/nfts?chain_id=${chainIdInput}&address=${addressInput}&page=1&limit=20`;
+
+    axios
+      .get(url, options)
+      .then((response: AxiosResponse<any>) => {
+        if (
+          response.data &&
+          response.data.data &&
+          Array.isArray(response.data.data)
+        ) {
+          let NFTCount = response.data.count;
+          setApiNFTResponseData(response.data.data);
+          setNFTCountState(NFTCount);
+          console.log(apiNFTResponseData);
+        } else {
+          console.error("Invalid response format.");
+        }
+      })
+      .catch((error: any) => console.error(error));
+  };
+
+  const handleButtonClick = () => {
+    transactionsAPICall();
+    NFTAPICall();
   };
 
   return (
@@ -137,7 +175,7 @@ export default function Home(): JSX.Element {
               onChange={(e) => setAddressInput(e.target.value)}
             />
             <button
-              onClick={makeAPICall}
+              onClick={handleButtonClick}
               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
               Make API Call
@@ -145,84 +183,46 @@ export default function Home(): JSX.Element {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 pl-36 bg-slate-100">
-          <Table className="mt-8">
-            <TableCaption>A list of your transactions</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-92">Address</TableHead>
-                <TableHead>Transaction Count</TableHead>
-                <TableHead>Total Transaction Value</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium truncate">
-                  {addressInput}
-                </TableCell>
-                <TableCell>{transactionCount}</TableCell>
-                <TableCell>{totalTransactionValue}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+        <div className="grid grid-cols-2 gap-4 p-10 bg-slate-100">
+          <Card>
+            <CardHeader>
+              <CardTitle>Transactions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <NewCard
+                allTransactions={apiResponseData}
+                address={addressInput}
+                value={totalTransactionValue}
+              />
+            </CardContent>
+          </Card>
 
-          <Table className="mt-8">
-            <TableCaption>A list of your transactions</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-92">Address</TableHead>
-                <TableHead>Transaction Count</TableHead>
-                <TableHead>Total Transaction Value</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                </TableCell>
-                <TableCell>{transactionCount}</TableCell>
-                <TableCell>{totalTransactionValue}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <Table className="mt-8">
-            <TableCaption>A list of your transactions</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-92">Address</TableHead>
-                <TableHead>Transaction Count</TableHead>
-                <TableHead>Total Transaction Value</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">{addressInput}</TableCell>
-                <TableCell>{transactionCount}</TableCell>
-                <TableCell>{totalTransactionValue}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Card>
+            <CardHeader>
+              <CardTitle>NFT</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <NewCard NFTransaction={apiNFTResponseData} />
+            </CardContent>
+          </Card>
 
-          <Table className="mt-8">
-            <TableCaption>A list of your transactions</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-92">Address</TableHead>
-                <TableHead>Transaction Count</TableHead>
-                <TableHead>Total Transaction Value</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">{addressInput}</TableCell>
-                <TableCell>{transactionCount}</TableCell>
-                <TableCell>{totalTransactionValue}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Sales</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <NewCard />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Sales</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <NewCard />
+            </CardContent>
+          </Card>
         </div>
       </main>
     </RainbowKitProvider>
