@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "engines": {
-    "node": ">=18.0.0 <18.9.9"
+    "node": ">=20.0.0 <20.9.9"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.0.4",
