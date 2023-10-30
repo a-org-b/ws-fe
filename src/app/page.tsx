@@ -284,7 +284,7 @@ export default function Home() {
               <div className="space-y-8">
                 {apiNFTResponseData &&
                   apiNFTResponseData.map((data, ind) => (
-                    <div className="flex items-center">
+                    <div key={ind} className="flex items-center">
                       <Avatar key={ind} className="h-9 w-9">
                         <AvatarImage
                           src={process_img(
