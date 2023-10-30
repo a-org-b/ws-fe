@@ -15,6 +15,16 @@ import { Chains, wagmiClient } from "@/wallet-config";
 import { WagmiConfig, usePublicClient, useWalletClient } from "wagmi";
 import { get_mint, prepare_mint } from "@/services/smartcontract/prepare_mint";
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 interface Transaction {
   blockNumber: number;
   blockTimestamp: string;
@@ -45,6 +55,7 @@ export default function Home(): JSX.Element {
         }
       });
   }, [pbClient, walletClient]);
+
   const makeAPICall = (): void => {
     const options = {
       method: "GET",
@@ -65,6 +76,7 @@ export default function Home(): JSX.Element {
           Array.isArray(response.data.data)
         ) {
           setApiResponseData(response.data.data);
+          console.log(response.data.data[0].transaction_hash);
           let count = response.data.count;
           let valueSum = 0;
           response.data.data.forEach((item: Transaction) => {
@@ -93,7 +105,7 @@ export default function Home(): JSX.Element {
         )}
         {walletClient && <p>{mintsLeft}</p>}
       </header>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <main className="p-24">
         <div className="bg-gray-100 p-10">
           <div className="max-w-md mx-auto bg-white p-5 rounded shadow-md">
             <label
@@ -132,15 +144,57 @@ export default function Home(): JSX.Element {
             </button>
           </div>
         </div>
-        {apiResponseData && (
+
+        <div className="grid grid-cols-2 gap-4 pl-36 bg-slate-100">
           <Table className="mt-8">
             <TableCaption>A list of your transactions</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">Address</TableHead>
+                <TableHead className="w-92">Address</TableHead>
                 <TableHead>Transaction Count</TableHead>
                 <TableHead>Total Transaction Value</TableHead>
-                <TableHead className="text-right">Wallet Score</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium truncate">
+                  {addressInput}
+                </TableCell>
+                <TableCell>{transactionCount}</TableCell>
+                <TableCell>{totalTransactionValue}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+
+          <Table className="mt-8">
+            <TableCaption>A list of your transactions</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-92">Address</TableHead>
+                <TableHead>Transaction Count</TableHead>
+                <TableHead>Total Transaction Value</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </TableCell>
+                <TableCell>{transactionCount}</TableCell>
+                <TableCell>{totalTransactionValue}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <Table className="mt-8">
+            <TableCaption>A list of your transactions</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-92">Address</TableHead>
+                <TableHead>Transaction Count</TableHead>
+                <TableHead>Total Transaction Value</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -148,13 +202,28 @@ export default function Home(): JSX.Element {
                 <TableCell className="font-medium">{addressInput}</TableCell>
                 <TableCell>{transactionCount}</TableCell>
                 <TableCell>{totalTransactionValue}</TableCell>
-                <TableCell className="text-right">
-                  {transactionCount + totalTransactionValue}
-                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
-        )}
+
+          <Table className="mt-8">
+            <TableCaption>A list of your transactions</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-92">Address</TableHead>
+                <TableHead>Transaction Count</TableHead>
+                <TableHead>Total Transaction Value</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">{addressInput}</TableCell>
+                <TableCell>{transactionCount}</TableCell>
+                <TableCell>{totalTransactionValue}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
       </main>
     </RainbowKitProvider>
   );
