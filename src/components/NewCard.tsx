@@ -26,30 +26,32 @@ export const NewCard: React.FC<NewCardProps> = ({
   value,
 }) => {
   return (
-    <div className="space-y-8">
-      <div className="flex items-center">
-        {NFTransaction &&
-          NFTransaction.map((data, ind) => (
-            <Avatar key={ind} className="h-9 w-9">
-              <AvatarImage src={data.image_uri} alt="Avatar" />
-              <AvatarFallback>Img</AvatarFallback>
-            </Avatar>
-          ))}
+    <>
+      <div className="space-y-8">
+        <div className="flex items-center">
+          {NFTransaction &&
+            NFTransaction.map((data, ind) => (
+              <Avatar key={ind} className="h-9 w-9">
+                <AvatarImage src={data.image_uri} alt="Avatar" />
+                <AvatarFallback>Img</AvatarFallback>
+              </Avatar>
+            ))}
 
-        {allTransactions &&
-          allTransactions.map((data, ind: number) => (
-            <p key={ind} className="">
-              {data.transaction_hash}
-            </p>
-          ))}
+          {allTransactions &&
+            allTransactions.map((data, ind: number) => (
+              <p key={ind} className="">
+                {data.transaction_hash}
+              </p>
+            ))}
 
-        <div className="ml-4 space-y-1">
-          <p className="text-sm text-muted-foreground ">{address}</p>
-        </div>
-        <div className="ml-auto font-medium">
-          {value} <span>Matic</span>
+          <div className="ml-4 space-y-1">
+            <p className="text-sm text-muted-foreground ">{address}</p>
+          </div>
+          <div className="ml-auto font-medium">
+            {value} <span>Matic</span>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

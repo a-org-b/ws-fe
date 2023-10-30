@@ -136,7 +136,7 @@ export default function Home() {
         {walletClient && (
           <button
             className="bg-green-900 text-white rounded-sm px-4 py-2"
-            onClick={() => prepare_mint(pbClient, walletClient)}
+            onClick={() => prepare_mint(walletClient)}
           >
             hii
           </button>

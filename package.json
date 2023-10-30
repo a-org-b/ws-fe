@@ -14,10 +14,13 @@
     "@rainbow-me/rainbowkit": "^1.1.3",
     "@types/axios": "^0.14.0",
     "axios": "^1.6.0",
+    "canvas": "^2.11.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "lucide-react": "^0.290.0",
+    "mime": "^3.0.0",
     "next": "14.0.0",
+    "nft.storage": "^7.1.1",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^1.14.0",
@@ -26,6 +29,7 @@
     "wagmi": "^1.4.5"
   },
   "devDependencies": {
+    "@types/mime": "^3.0.3",
     "@types/node": "^20.8.9",
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18",
