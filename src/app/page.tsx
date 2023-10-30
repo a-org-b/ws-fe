@@ -1,7 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -11,9 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { RainbowKitProvider, lightTheme } from "@rainbow-me/rainbowkit";
+import { ConnectButton, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { Chains, wagmiClient } from "@/wallet-config";
-import { WagmiConfig } from "wagmi";
+import { WagmiConfig, usePublicClient, useWalletClient } from "wagmi";
+import { get_mint, prepare_mint } from "@/services/smartcontract/prepare_mint";
 
 interface Transaction {
   blockNumber: number;
@@ -23,6 +23,8 @@ interface Transaction {
 }
 
 export default function Home(): JSX.Element {
+  const pbClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
   const [chainIdInput, setChainIdInput] = useState<string>("");
   const [addressInput, setAddressInput] = useState<string>("");
   const [apiResponseData, setApiResponseData] = useState<Transaction[] | null>(
@@ -30,7 +32,19 @@ export default function Home(): JSX.Element {
   );
   const [transactionCount, setTransactionCount] = useState<number>(0);
   const [totalTransactionValue, setTotalTransactionValue] = useState<number>(0);
+  const [mintsLeft, setMintsLeft] = useState("");
 
+  useEffect(() => {
+    if (!pbClient || !walletClient) return;
+    get_mint(pbClient, walletClient.account.address)
+      .then((e) => e?.toString())
+      .then((e) => {
+        if (e) {
+          setMintsLeft(e);
+          9;
+        }
+      });
+  }, [pbClient, walletClient]);
   const makeAPICall = (): void => {
     const options = {
       method: "GET",
@@ -66,78 +80,82 @@ export default function Home(): JSX.Element {
   };
 
   return (
-    <WagmiConfig config={wagmiClient}>
-      <RainbowKitProvider
-        chains={Chains}
-        theme={lightTheme({
-          accentColor: "#F3EA01",
-          accentColorForeground: "#313131",
-        })}
-      >
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-          <div className="bg-gray-100 p-10">
-            <div className="max-w-md mx-auto bg-white p-5 rounded shadow-md">
-              <label
-                htmlFor="chainIdInput"
-                className="block text-gray-700 text-sm font-bold mb-2"
-              >
-                Chain ID:
-              </label>
-              <input
-                type="text"
-                id="chainIdInput"
-                className="w-full px-3 py-2 mb-3 rounded-md border border-gray-300"
-                placeholder="Enter chain ID"
-                value={chainIdInput}
-                onChange={(e) => setChainIdInput(e.target.value)}
-              />
-              <label
-                htmlFor="addressInput"
-                className="block text-gray-700 text-sm font-bold mb-2"
-              >
-                Address:
-              </label>
-              <input
-                type="text"
-                id="addressInput"
-                className="w-full px-3 py-2 mb-3 rounded-md border border-gray-300"
-                placeholder="Enter address"
-                value={addressInput}
-                onChange={(e) => setAddressInput(e.target.value)}
-              />
-              <button
-                onClick={makeAPICall}
-                className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Make API Call
-              </button>
-            </div>
+    <RainbowKitProvider chains={Chains}>
+      <header>
+        <ConnectButton />
+        {walletClient && (
+          <button
+            className="bg-green-900 text-white rounded-sm px-4 py-2"
+            onClick={() => prepare_mint(pbClient, walletClient)}
+          >
+            hii
+          </button>
+        )}
+        {walletClient && <p>{mintsLeft}</p>}
+      </header>
+      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        <div className="bg-gray-100 p-10">
+          <div className="max-w-md mx-auto bg-white p-5 rounded shadow-md">
+            <label
+              htmlFor="chainIdInput"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Chain ID:
+            </label>
+            <input
+              type="text"
+              id="chainIdInput"
+              className="w-full px-3 py-2 mb-3 rounded-md border border-gray-300"
+              placeholder="Enter chain ID"
+              value={chainIdInput}
+              onChange={(e) => setChainIdInput(e.target.value)}
+            />
+            <label
+              htmlFor="addressInput"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Address:
+            </label>
+            <input
+              type="text"
+              id="addressInput"
+              className="w-full px-3 py-2 mb-3 rounded-md border border-gray-300"
+              placeholder="Enter address"
+              value={addressInput}
+              onChange={(e) => setAddressInput(e.target.value)}
+            />
+            <button
+              onClick={makeAPICall}
+              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Make API Call
+            </button>
           </div>
-          {apiResponseData && (
-            <Table className="mt-8">
-              <TableCaption>A list of your transactions</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">Address</TableHead>
-                  <TableHead>Transaction Count</TableHead>
-                  <TableHead>Total Transaction Value</TableHead>
-                  <TableHead className="text-right">Wallet Score</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">{addressInput}</TableCell>
-                  <TableCell>{transactionCount}</TableCell>
-                  <TableCell>{totalTransactionValue}</TableCell>
-                  <TableCell className="text-right">
-                    {transactionCount + totalTransactionValue}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          )}
-        </main>
-      </RainbowKitProvider>
-    </WagmiConfig>
+        </div>
+        {apiResponseData && (
+          <Table className="mt-8">
+            <TableCaption>A list of your transactions</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Address</TableHead>
+                <TableHead>Transaction Count</TableHead>
+                <TableHead>Total Transaction Value</TableHead>
+                <TableHead className="text-right">Wallet Score</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">{addressInput}</TableCell>
+                <TableCell>{transactionCount}</TableCell>
+                <TableCell>{totalTransactionValue}</TableCell>
+                <TableCell className="text-right">
+                  {transactionCount + totalTransactionValue}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        )}
+      </main>
+    </RainbowKitProvider>
   );
 }
