@@ -1,39 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Wallet Score App
 
-## Smart contract
-0xAbe128438210ea30a9b14635531b3c98a2711c82
+# Problem
+We noticed some application forms requires wallet address, mostly to check on chain activities (VC, accelerators application for founders). This wallet address is then checked for token holdings and dapps interactions to check if the expirence is wallet.
 
-## Getting Started
+Instead of doing this manually we thought why not calculate the score and issue the sould bound NFT with that score.
 
-First, run the development server:
+# Introducing Wallet Score
+Wallet Score introduces ability to analysis wallet's on chain activity, see score for on chain interactions and mint nft with that score.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+There are three main components useful in this application,
+- Wallet Score - To check on chain score calculated by factors like smartcontract deployments, high value transactions, high value token holdings, high value NFT holdings and more like this.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Dashboard - Here the top parameters to calculate score are showed in detailed, like transactios with value and to address. Top NFTs holdings with there value and smart contract address. Tokens holding with real value in dollar. Smart contract deployments.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- WS NFT - User can mint Soul Bound NFT which will have score attached and he can showcase or present that NFT anywhere.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+# Tools used to build this
 
-## Learn More
+- Viem - Ether JS replacement used to interact with smart contracts.
 
-To learn more about Next.js, take a look at the following resources:
+- NextJS + TypeScript - Both Frontend and Backend made in it.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Solidity - To develop Soul Bond NFT with mint balance.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- ChainBase - Most important which powers the app with its API to provide data neccessary to calculate wallet score and show top intaractions, along with ability to create own APIs using SQL queries [ChainBase Data cloud](https://console.chainbase.com/dataCloud)
 
-## Deploy on Vercel
+# Running app locally
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Make sure you have yarn and node 18+ installed.
+- Then run `yarn` to install all dependencies.
+- Then setup .env.local file, refer sample.env for info about how to obtain this.
+- Then run `yarn dev` to start development server.
