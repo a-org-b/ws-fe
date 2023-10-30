@@ -34,7 +34,7 @@ export default function Home(): JSX.Element {
       method: "GET",
       headers: {
         accept: "application/json",
-        "x-api-key": process.env.CHAINBASE_API_KEY,
+        "x-api-key": process.env.NEXT_PUBLIC_CHAINBASE_API_KEY,
       },
     };
 
