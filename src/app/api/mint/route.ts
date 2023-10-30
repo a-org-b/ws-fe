@@ -16,12 +16,13 @@ export async function GET(
     req: Request
 ) {
     const { searchParams } = new URL(req.url)
-    const score = 100;
-    create_image(score);
     const res = await storeNFT("./image.png", "Wallet Score NFT", "Showcase your on chain score to frens");
     console.log(res);
     const address = searchParams.get('address') as `0x${string}`
-    if (address != null) {
+    // TODO calculate score instead of getting it from client
+    const score = +(searchParams.get('score') ?? "0")
+    if (address != null && score != 0) {
+        create_image(score);
         console.log("minting");
         await mint(client, address, BigInt(10000), res.url);
         return Response.json('mint successful', { status: 200 })
